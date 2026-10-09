@@ -32,25 +32,88 @@ router.get("/", async (req, res) => {
     });
   }
 });
+
 router.get("/search", async (req, res) => {
   try {
-    const { q } = req.query;
+    const { q, filters, logic = "AND" } = req.query;
 
-    if (!q || q.trim() === "") {
-      return res.status(400).json({
-        message: "Search query is required"
+    const conditions = [];
+
+    // Keep the existing text-search behavior.
+    // if (q && q.trim() !== "") {
+    //   const searchTerm = q.trim();
+
+      // conditions.push({
+      //   $or: [
+      //     { title: { $regex: searchTerm, $options: "i" } },
+      //     { author: { $regex: searchTerm, $options: "i" } },
+      //     { category: { $regex: searchTerm, $options: "i" } }
+      //   ]
+      // });
+    // }
+
+    // Search by title, author, or category.
+    if (q && q.trim() !== "") {
+      const searchTerm = q.trim();
+
+      conditions.push({
+        $or: [
+          { title: { $regex: searchTerm, $options: "i" } },
+          { author: { $regex: searchTerm, $options: "i" } },
+          { category: { $regex: searchTerm, $options: "i" } }
+        ]
+      });
+    }
+    // Read active metadata filters from the query string.
+    const allowedFields = [
+      "title",
+      "author",
+      "category",
+      "shelf",
+      "rack",
+      "location"
+    ];
+
+    if (filters) {
+      const filterList = Array.isArray(filters)
+        ? filters
+        : [filters];
+
+      filterList.forEach((filter) => {
+        const separatorIndex = filter.indexOf(":");
+
+        if (separatorIndex === -1) return;
+
+        const field = filter.slice(0, separatorIndex);
+        const value = filter.slice(separatorIndex + 1).trim();
+
+        if (
+          allowedFields.includes(field) &&
+          value !== ""
+        ) {
+          conditions.push({
+            [field]: {
+              $regex: value,
+              $options: "i"
+            }
+          });
+        }
       });
     }
 
-    const searchTerm = q.trim();
+    const searchLogic = logic.toUpperCase() === "OR"
+      ? "$or"
+      : "$and";
 
-    const books = await Book.find({
-      $or: [
-        { title: { $regex: searchTerm, $options: "i" } },
-        { author: { $regex: searchTerm, $options: "i" } },
-        { category: { $regex: searchTerm, $options: "i" } }
-      ]
-    });
+    let query = {};
+
+    if (conditions.length === 1) {
+      query = conditions[0];
+    } else if (conditions.length > 1) {
+      query = { [searchLogic]: conditions };
+    }
+
+    const books = await Book.find(query);
 
     res.status(200).json(books);
   } catch (error) {

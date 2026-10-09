@@ -159,7 +159,10 @@ function UserHome() {
   const [loading, setLoading] = useState(true);
   const [selectedBookId, setSelectedBookId] = useState(null);
   const [searchLoading, setSearchLoading] = useState(false);
-
+  const [filters, setFilters] = useState([]);
+  const [filterField, setFilterField] = useState("category");
+  const [filterValue, setFilterValue] = useState("");
+  const [filterLogic, setFilterLogic] = useState("AND");
   useEffect(() => {
     fetchBooks();
   }, []);
@@ -207,6 +210,82 @@ function UserHome() {
     }
   };
 
+  const addFilter = () => {
+    if (!filterValue.trim()) {
+      alert("Please enter a filter value");
+      return;
+    }
+
+    const newFilter = {
+      id: Date.now(),
+      field: filterField,
+      value: filterValue.trim(),
+      active: true
+    };
+
+    setFilters((previousFilters) => [
+      ...previousFilters,
+      newFilter
+    ]);
+
+    setFilterValue("");
+  };
+  
+  const toggleFilter = (id) => {
+    setFilters((previousFilters) =>
+      previousFilters.map((filter) =>
+        filter.id === id
+          ? { ...filter, active: !filter.active }
+          : filter
+      )
+    );
+  };
+
+  const removeFilter = (id) => {
+    setFilters((previousFilters) =>
+      previousFilters.filter((filter) => filter.id !== id)
+    );
+  };
+  
+  const applyFilters = async () => {
+    setSearchLoading(true);
+
+    try {
+      const params = new URLSearchParams();
+
+      if (searchTerm.trim()) {
+        params.set("q", searchTerm.trim());
+      }
+
+      params.set("logic", filterLogic);
+
+      filters
+        .filter((filter) => filter.active)
+        .forEach((filter) => {
+          params.append(
+            "filters",
+            `${filter.field}:${filter.value}`
+          );
+        });
+
+      const response = await fetch(
+        `http://localhost:5000/api/books/search?${params.toString()}`
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setBooks(data);
+      } else {
+        alert(data.message || "Failed to apply filters");
+      }
+    } catch (error) {
+      console.error("Apply filters error:", error);
+      alert("Could not connect to the backend");
+    } finally {
+      setSearchLoading(false);
+    }
+  };
   if (selectedBookId) {
     return (
       <BookDetails
@@ -215,19 +294,58 @@ function UserHome() {
       />
     );
   }
+// const getCombinedScore = (book) => {
+//   const textScore = scoreBook(book);
 
-  const filteredBooks = searchTerm.trim()
-    ? books.filter((book) => {
-        const search = searchTerm.toLowerCase();
+//   const filterScore = filters
+//     .filter((filter) => filter.active)
+//     .reduce((score, filter) => {
+//       const bookValue = String(book[filter.field] ?? "").toLowerCase();
+//       const filterValue = filter.value.toLowerCase();
 
-        return (
-          book.title.toLowerCase().includes(search) ||
-          book.author.toLowerCase().includes(search) ||
-          book.category.toLowerCase().includes(search)
-        );
-      })
-    : books;
+//       return bookValue.includes(filterValue) ? score + 2 : score;
+//     }, 0);
 
+//   return textScore + filterScore;
+// };
+const getTextScore = (book) => {
+  const query = searchTerm.trim().toLowerCase();
+
+  if (!query) return 0;
+
+  const title = book.title?.toLowerCase().trim() || "";
+  const author = book.author?.toLowerCase().trim() || "";
+  const category = book.category?.toLowerCase().trim() || "";
+
+  let score = 0;
+
+  if (title === query) score += 10;
+  else if (title.includes(query)) score += 5;
+
+  if (author === query) score += 6;
+  else if (author.includes(query)) score += 3;
+
+  if (category === query) score += 4;
+  else if (category.includes(query)) score += 2;
+
+  return score;
+};
+ const getFilterScore = (book) =>
+  filters
+    .filter((filter) => filter.active)
+    .reduce((score, filter) => {
+      const bookValue = String(book[filter.field] ?? "").toLowerCase();
+      const filterValue = filter.value.toLowerCase();
+
+      return bookValue.includes(filterValue) ? score + 2 : score;
+    }, 0);
+
+const filteredBooks = [...books].sort((a, b) => {
+  const scoreA = getTextScore(a) + getFilterScore(a);
+  const scoreB = getTextScore(b) + getFilterScore(b);
+
+  return scoreB - scoreA;
+});
   return (
     <div className="user-home">
 
@@ -262,12 +380,91 @@ function UserHome() {
             }}
           />
 
-          <button className="search-button">
-            Search
-          </button>
+         <button
+  className="search-button"
+  type="button"
+  onClick={() => searchBooks(searchTerm)}
+>
+  Search
+</button>
 
         </div>
 
+        <div className="filter-panel">
+          <h3>Filter Books</h3>
+
+          <div className="filter-controls">
+            <select
+              value={filterField}
+              onChange={(e) => setFilterField(e.target.value)}
+            >
+              <option value="title">Title</option>
+              <option value="author">Author</option>
+              <option value="category">Category</option>
+              <option value="shelf">Shelf</option>
+              <option value="rack">Rack</option>
+              <option value="location">Location</option>
+            </select>
+
+            <input
+              type="text"
+              placeholder="Enter filter value..."
+              value={filterValue}
+              onChange={(e) => setFilterValue(e.target.value)}
+            />
+
+            <button type="button" onClick={addFilter}>
+              Add Filter
+            </button>
+          </div>
+
+          <div className="filter-logic">
+            <label htmlFor="filter-logic">Match filters using:</label>
+
+            <select
+              id="filter-logic"
+              value={filterLogic}
+              onChange={(e) => setFilterLogic(e.target.value)}
+            >
+              <option value="AND">AND — match all</option>
+              <option value="OR">OR — match any</option>
+            </select>
+
+            <button type="button" onClick={applyFilters}>
+              Apply Filters
+            </button>
+          </div>
+
+          <div className="active-filters">
+            {filters.length === 0 ? (
+              <p>No filters added yet.</p>
+            ) : (
+              filters.map((filter) => (
+                <div className="filter-item" key={filter.id}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={filter.active}
+                      onChange={() => toggleFilter(filter.id)}
+                    />
+
+                    <span>
+                      {filter.field}: {filter.value}
+                      {!filter.active && " (Inactive)"}
+                    </span>
+                  </label>
+
+                  <button
+                    type="button"
+                    onClick={() => removeFilter(filter.id)}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
         {searchLoading && (
           <p className="search-status">
             Searching...
@@ -333,7 +530,11 @@ function UserHome() {
                 </div>
 
                 <h3>{book.title}</h3>
-
+{searchTerm.trim() !== "" && (
+  <p className="relevance-score">
+    Relevance score: {getTextScore(book) + getFilterScore(book)}
+  </p>
+)}
                 <p className="book-author">
                   by {book.author}
                 </p>
