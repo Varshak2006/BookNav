@@ -1,8 +1,12 @@
-﻿node_modules/
+﻿# Python generated files
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Node dependencies
+node_modules/
+
+# Environment secrets
 .env
 .env.*
 !.env.example
-dist/
-build/
-.vite/
-server/password
