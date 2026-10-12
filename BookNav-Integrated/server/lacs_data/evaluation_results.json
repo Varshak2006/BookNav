@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "dataset_path": "E:\\BookNav-master\\BookNav-Integrated\\server\\lacs_data\\evaluation_dataset.csv",
+    "dataset_sha256": "719635f883406cbd7a5fd74143465162fa47ff18b666054a8acc3bf4cf69fdb1",
+    "vocabulary_path": "E:\\BookNav-master\\BookNav-Integrated\\server\\lacs_data\\library_books.csv",
+    "vocabulary_size": 104,
+    "total_samples": 220,
+    "timestamp": "2026-10-12 18:27:34"
+  },
+  "all_queries": {
+    "queries": 220,
+    "top1_accuracy": 0.9227,
+    "top3_accuracy": 1.0,
+    "average_latency_ms": 0.201,
+    "p50_latency_ms": 0.125,
+    "p95_latency_ms": 0.666,
+    "p99_latency_ms": 0.879
+  },
+  "mistake_queries": {
+    "queries": 110,
+    "top1_accuracy": 0.8455,
+    "top3_accuracy": 1.0,
+    "average_latency_ms": 0.392,
+    "p50_latency_ms": 0.314,
+    "p95_latency_ms": 0.742,
+    "p99_latency_ms": 0.968
+  },
+  "correct_queries": {
+    "queries": 110,
+    "top1_accuracy": 1.0,
+    "top3_accuracy": 1.0,
+    "average_latency_ms": 0.01,
+    "p50_latency_ms": 0.008,
+    "p95_latency_ms": 0.019,
+    "p99_latency_ms": 0.028,
+    "preservation_rate": 1.0,
+    "false_correction_rate": 0.0
+  }
+}

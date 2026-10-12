@@ -1,0 +1,57 @@
+[
+  {
+    "vocabulary_size": 1000,
+    "candidate_generation_avg_ms": 0.18004000012297183,
+    "scoring_avg_ms": 0.1885199984245002,
+    "total_avg_ms": 0.35891999723389745,
+    "total_p50_ms": 0.3235000040149316,
+    "total_p95_ms": 0.6003000016789883,
+    "total_p99_ms": 0.6003000016789883,
+    "peak_memory_bytes": 6678261,
+    "average_candidates": 0.4
+  },
+  {
+    "vocabulary_size": 5000,
+    "candidate_generation_avg_ms": 0.17818000342231244,
+    "scoring_avg_ms": 0.16997999790012835,
+    "total_avg_ms": 0.33753999741747975,
+    "total_p50_ms": 0.3015999973285943,
+    "total_p95_ms": 0.5876000068383291,
+    "total_p99_ms": 0.5876000068383291,
+    "peak_memory_bytes": 35426335,
+    "average_candidates": 0.4
+  },
+  {
+    "vocabulary_size": 10000,
+    "candidate_generation_avg_ms": 0.18383999995421618,
+    "scoring_avg_ms": 0.16339999987948683,
+    "total_avg_ms": 0.3338800015626475,
+    "total_p50_ms": 0.30059998971410096,
+    "total_p95_ms": 0.5759000050602481,
+    "total_p99_ms": 0.5759000050602481,
+    "peak_memory_bytes": 67101222,
+    "average_candidates": 0.4
+  },
+  {
+    "vocabulary_size": 50000,
+    "candidate_generation_avg_ms": 0.33662000205367804,
+    "scoring_avg_ms": 0.27531999881230296,
+    "total_avg_ms": 0.606259994674474,
+    "total_p50_ms": 0.6334999925456941,
+    "total_p95_ms": 1.1039999953936785,
+    "total_p99_ms": 1.1039999953936785,
+    "peak_memory_bytes": 352943872,
+    "average_candidates": 0.4
+  },
+  {
+    "vocabulary_size": 100000,
+    "candidate_generation_avg_ms": 0.366239994764328,
+    "scoring_avg_ms": 0.47212000618930905,
+    "total_avg_ms": 0.8146599982865155,
+    "total_p50_ms": 0.8063999994192272,
+    "total_p95_ms": 1.6328000056091696,
+    "total_p99_ms": 1.6328000056091696,
+    "peak_memory_bytes": 666583046,
+    "average_candidates": 0.4
+  }
+]

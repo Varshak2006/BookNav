@@ -1,0 +1,221 @@
+type,original,expected,error_type
+correct,gitanjali,gitanjali,none
+correct,rabindranath tagore,rabindranath tagore,none
+correct,poetry,poetry,none
+correct,gitanjali rabindranath tagore,gitanjali rabindranath tagore,none
+correct,poetry books,poetry books,none
+correct,poetry indian literature,poetry indian literature,none
+correct,poetry nobel,poetry nobel,none
+correct,the home and the world,the home and the world,none
+correct,fiction,fiction,none
+correct,the home and the world rabindranath tagore,the home and the world rabindranath tagore,none
+correct,fiction books,fiction books,none
+correct,indian literature nationalism,indian literature nationalism,none
+correct,indian nationalism,indian nationalism,none
+correct,harry potter and the philosopher's stone,harry potter and the philosopher's stone,none
+correct,j. k. rowling,j. k. rowling,none
+correct,fantasy,fantasy,none
+correct,harry potter and the philosopher's stone j. k. rowling,harry potter and the philosopher's stone j. k. rowling,none
+correct,fantasy books,fantasy books,none
+correct,magic wizard fiction,magic wizard fiction,none
+correct,magic fiction,magic fiction,none
+correct,harry potter and the chamber of secrets,harry potter and the chamber of secrets,none
+correct,harry potter and the chamber of secrets j. k. rowling,harry potter and the chamber of secrets j. k. rowling,none
+correct,machine learning,machine learning,none
+correct,tom m. mitchell,tom m. mitchell,none
+correct,computer science,computer science,none
+correct,machine learning tom m. mitchell,machine learning tom m. mitchell,none
+correct,computer science books,computer science books,none
+correct,machine learning algorithms,machine learning algorithms,none
+correct,machine intelligence,machine intelligence,none
+correct,deep learning,deep learning,none
+correct,ian goodfellow,ian goodfellow,none
+correct,deep learning ian goodfellow,deep learning ian goodfellow,none
+correct,deep learning neural,deep learning neural,none
+correct,deep intelligence,deep intelligence,none
+correct,artificial intelligence: a modern approach,artificial intelligence: a modern approach,none
+correct,stuart russell and peter norvig,stuart russell and peter norvig,none
+correct,artificial intelligence: a modern approach stuart russell and peter norvig,artificial intelligence: a modern approach stuart russell and peter norvig,none
+correct,artificial intelligence ai,artificial intelligence ai,none
+correct,artificial algorithms,artificial algorithms,none
+correct,python crash course,python crash course,none
+correct,eric matthes,eric matthes,none
+correct,programming,programming,none
+correct,python crash course eric matthes,python crash course eric matthes,none
+correct,programming books,programming books,none
+correct,python programming coding,python programming coding,none
+correct,python coding,python coding,none
+correct,algorithms,algorithms,none
+correct,robert sedgewick and kevin wayne,robert sedgewick and kevin wayne,none
+correct,algorithms robert sedgewick and kevin wayne,algorithms robert sedgewick and kevin wayne,none
+correct,algorithm algorithms data,algorithm algorithms data,none
+correct,algorithm programming,algorithm programming,none
+correct,database system concepts,database system concepts,none
+correct,abraham silberschatz,abraham silberschatz,none
+correct,database,database,none
+correct,database system concepts abraham silberschatz,database system concepts abraham silberschatz,none
+correct,database books,database books,none
+correct,database sql systems,database sql systems,none
+correct,database systems,database systems,none
+correct,operating system concepts,operating system concepts,none
+correct,operating system concepts abraham silberschatz,operating system concepts abraham silberschatz,none
+correct,operating systems os,operating systems os,none
+correct,operating processes,operating processes,none
+correct,computer networks,computer networks,none
+correct,andrew s. tanenbaum,andrew s. tanenbaum,none
+correct,networking,networking,none
+correct,computer networks andrew s. tanenbaum,computer networks andrew s. tanenbaum,none
+correct,networking books,networking books,none
+correct,computer networks tcp,computer networks tcp,none
+correct,computer ip,computer ip,none
+correct,clean code,clean code,none
+correct,robert c. martin,robert c. martin,none
+correct,clean code robert c. martin,clean code robert c. martin,none
+correct,software engineering coding,software engineering coding,none
+correct,software coding,software coding,none
+correct,data structures and algorithms in python,data structures and algorithms in python,none
+correct,michael t. goodrich,michael t. goodrich,none
+correct,data structures and algorithms in python michael t. goodrich,data structures and algorithms in python michael t. goodrich,none
+correct,data structures algorithms,data structures algorithms,none
+correct,data python,data python,none
+correct,artificial intelligence algorithms,artificial intelligence algorithms,none
+correct,deep learning neural networks,deep learning neural networks,none
+correct,python programming,python programming,none
+correct,computer networks tcp ip,computer networks tcp ip,none
+correct,indian literature poetry,indian literature poetry,none
+correct,fantasy magic wizard,fantasy magic wizard,none
+correct,data structures algorithms python,data structures algorithms python,none
+correct,gitanjali,gitanjali,none
+correct,rabindranath tagore,rabindranath tagore,none
+correct,poetry,poetry,none
+correct,gitanjali rabindranath tagore,gitanjali rabindranath tagore,none
+correct,poetry books,poetry books,none
+correct,poetry indian literature,poetry indian literature,none
+correct,poetry nobel,poetry nobel,none
+correct,the home and the world,the home and the world,none
+correct,fiction,fiction,none
+correct,the home and the world rabindranath tagore,the home and the world rabindranath tagore,none
+correct,fiction books,fiction books,none
+correct,indian literature nationalism,indian literature nationalism,none
+correct,indian nationalism,indian nationalism,none
+correct,harry potter and the philosopher's stone,harry potter and the philosopher's stone,none
+correct,j. k. rowling,j. k. rowling,none
+correct,fantasy,fantasy,none
+correct,harry potter and the philosopher's stone j. k. rowling,harry potter and the philosopher's stone j. k. rowling,none
+correct,fantasy books,fantasy books,none
+correct,magic wizard fiction,magic wizard fiction,none
+correct,magic fiction,magic fiction,none
+correct,harry potter and the chamber of secrets,harry potter and the chamber of secrets,none
+correct,harry potter and the chamber of secrets j. k. rowling,harry potter and the chamber of secrets j. k. rowling,none
+correct,machine learning,machine learning,none
+correct,tom m. mitchell,tom m. mitchell,none
+mistake,gitanjai,gitanjali,generated
+mistake,rabindranath tagor,rabindranath tagore,generated
+mistake,poety,poetry,generated
+mistake,gitanjai rabindranath tagor,gitanjali rabindranath tagore,generated
+mistake,poety books,poetry books,generated
+mistake,poetry indan litrature,poetry indian literature,generated
+mistake,poety nobel,poetry nobel,generated
+mistake,the home and the wrold,the home and the world,generated
+mistake,fictin,fiction,generated
+mistake,the home and the wrold rabindranath tagore,the home and the world rabindranath tagore,generated
+mistake,fictin books,fiction books,generated
+mistake,indian litrature nationalim,indian literature nationalism,generated
+mistake,indan nationalism,indian nationalism,generated
+mistake,harry pottr and the philosopher's stone,harry potter and the philosopher's stone,generated
+mistake,j. k. rowlig,j. k. rowling,generated
+mistake,fantacy,fantasy,generated
+mistake,hary potter and the philosopher's stone j. k. rowling,harry potter and the philosopher's stone j. k. rowling,generated
+mistake,mgaic wizard fictin,magic wizard fiction,generated
+mistake,magic fictin,magic fiction,generated
+mistake,harry pottr and the chamber of secres,harry potter and the chamber of secrets,generated
+mistake,harry pottr and the chamber of secrets j. k. rowling,harry potter and the chamber of secrets j. k. rowling,generated
+mistake,machne learning,machine learning,generated
+mistake,tom m. mitchel,tom m. mitchell,generated
+mistake,compter science,computer science,generated
+mistake,machne learning tom m. mitchell,machine learning tom m. mitchell,generated
+mistake,computer scince books,computer science books,generated
+mistake,machne learning algoritms,machine learning algorithms,generated
+mistake,machne intelligence,machine intelligence,generated
+mistake,deep larning,deep learning,generated
+mistake,deep larning ian goodfellw,deep learning ian goodfellow,generated
+mistake,deep larning nueral,deep learning neural,generated
+mistake,deep inteligence,deep intelligence,generated
+mistake,artificial intelligenc: a modern approah,artificial intelligence: a modern approach,generated
+mistake,sutart russell and peter norvig,stuart russell and peter norvig,generated
+mistake,artificial intelligence: a modern approach stuart russel and pteer norvig,artificial intelligence: a modern approach stuart russell and peter norvig,generated
+mistake,artifical inteligence ai,artificial intelligence ai,generated
+mistake,artifical algorithms,artificial algorithms,generated
+mistake,pyhton crash cuorse,python crash course,generated
+mistake,programing,programming,generated
+mistake,python crash cuorse eric matths,python crash course eric matthes,generated
+mistake,python programing codding,python programming coding,generated
+mistake,python codding,python coding,generated
+mistake,algoritms,algorithms,generated
+mistake,robert sedgewick and kevin wyane,robert sedgewick and kevin wayne,generated
+mistake,algoritms robert sedgewik and kevin wayne,algorithms robert sedgewick and kevin wayne,generated
+mistake,algoritm algoritms data,algorithm algorithms data,generated
+mistake,algoritm programming,algorithm programming,generated
+mistake,databse system concpts,database system concepts,generated
+mistake,abrahm silberschatz,abraham silberschatz,generated
+mistake,databse,database,generated
+mistake,database systm concepts abraham silberschaz,database system concepts abraham silberschatz,generated
+mistake,database sql systms,database sql systems,generated
+mistake,database systms,database systems,generated
+mistake,operatig systm concepts,operating system concepts,generated
+mistake,operating systm concepts abraham silberschaz,operating system concepts abraham silberschatz,generated
+mistake,operatig systems os,operating systems os,generated
+mistake,operating processs,operating processes,generated
+mistake,compter networks,computer networks,generated
+mistake,adnrew s. tanenbam,andrew s. tanenbaum,generated
+mistake,networkig,networking,generated
+mistake,compter networks adnrew s. tanenbaum,computer networks andrew s. tanenbaum,generated
+mistake,networkig books,networking books,generated
+mistake,compter netwroks tcp,computer networks tcp,generated
+mistake,compter ip,computer ip,generated
+mistake,rboert c. martin,robert c. martin,generated
+mistake,softwae engineering codding,software engineering coding,generated
+mistake,software codding,software coding,generated
+mistake,michal t. goodrih,michael t. goodrich,generated
+mistake,data structures and algorithms in python michal t. goodrich,data structures and algorithms in python michael t. goodrich,generated
+mistake,data structres algoritms,data structures algorithms,generated
+mistake,artifical inteligence algorithms,artificial intelligence algorithms,generated
+mistake,deep learning nueral networks,deep learning neural networks,generated
+mistake,python programing,python programming,generated
+mistake,compter networks tcp ip,computer networks tcp ip,generated
+mistake,indian litrature poety,indian literature poetry,generated
+mistake,fantacy magic wziard,fantasy magic wizard,generated
+mistake,data structres algorithms pyhton,data structures algorithms python,generated
+mistake,gitanjai,gitanjali,generated
+mistake,rabindranath tagor,rabindranath tagore,generated
+mistake,poety,poetry,generated
+mistake,gitanjali ravindranath tagor,gitanjali rabindranath tagore,generated
+mistake,poety books,poetry books,generated
+mistake,poety indan literature,poetry indian literature,generated
+mistake,poety nobel,poetry nobel,generated
+mistake,fictin,fiction,generated
+mistake,the home and the wrold rabindranath tagor,the home and the world rabindranath tagore,generated
+mistake,fictin books,fiction books,generated
+mistake,indan litrature nationalism,indian literature nationalism,generated
+mistake,indan nationalism,indian nationalism,generated
+mistake,harry potter and the philosopher's sotne,harry potter and the philosopher's stone,generated
+mistake,fantacy,fantasy,generated
+mistake,harry potter and the philosopher's sotne j. k. rowling,harry potter and the philosopher's stone j. k. rowling,generated
+mistake,magic wziard fictin,magic wizard fiction,generated
+mistake,magic fictin,magic fiction,generated
+mistake,harry pottr and the chamber of secrets,harry potter and the chamber of secrets,generated
+mistake,harry potter and the chamber of secrets j. k. rowlig,harry potter and the chamber of secrets j. k. rowling,generated
+mistake,machne learning,machine learning,generated
+mistake,gitanjai,gitanjali,generated
+mistake,rabindranath tagor,rabindranath tagore,generated
+mistake,poety,poetry,generated
+mistake,gitanjali ravindranath tagor,gitanjali rabindranath tagore,generated
+mistake,poety books,poetry books,generated
+mistake,poety indan literature,poetry indian literature,generated
+mistake,poety nobel,poetry nobel,generated
+mistake,the home and the wrold,the home and the world,generated
+mistake,fictin,fiction,generated
+mistake,fictin books,fiction books,generated
+mistake,indan litrature nationalism,indian literature nationalism,generated
+mistake,indan nationalism,indian nationalism,generated
+mistake,harry potter and the philosopher's sotne,harry potter and the philosopher's stone,generated

@@ -1,0 +1,74 @@
+================================================================================
+BOOKNAV / LACS — ENGINEERING BOOK METADATA DATASET REPORT
+================================================================================
+Generated At:                     2026-10-11 12:17:12 UTC
+Primary Output File:              engineering_books.csv
+Data Source:                      Official Open Library Search API (openlibrary.org)
+Total Raw Records Collected:      1123
+Total Valid Unique Books:         1068
+Duplicate Records Removed:        55
+Invalid / Unusable Records:       0
+Records with Missing Authors:     24 (preserved with 'Unknown Author')
+Records with Missing ISBNs:       64
+Records with Missing Pub Years:   12
+
+--------------------------------------------------------------------------------
+SUBJECT DISTRIBUTION (Targeted Query Subjects)
+--------------------------------------------------------------------------------
+  - Programming Languages                     :   35 books
+  - Database Management Systems               :   35 books
+  - Computer Networks                         :   35 books
+  - Operating Systems                         :   35 books
+  - Computer Architecture                     :   35 books
+  - Natural Language Processing               :   35 books
+  - Cloud Computing                           :   35 books
+  - Internet of Things                        :   35 books
+  - Blockchain                                :   35 books
+  - Linear Algebra                            :   35 books
+  - Mechanical Engineering                    :   35 books
+  - Civil Engineering                         :   35 books
+  - Communication Engineering                 :   35 books
+  - Theory of Computation                     :   34 books
+  - Distributed Systems                       :   34 books
+  - Web Development                           :   34 books
+  - Artificial Intelligence                   :   34 books
+  - Computer Vision                           :   34 books
+  - Probability and Statistics                :   34 books
+  - Electronics Engineering                   :   34 books
+  - Control Systems                           :   34 books
+  - Cryptography                              :   33 books
+  - Electrical Engineering                    :   32 books
+  - Object-Oriented Programming               :   31 books
+  - Software Engineering                      :   31 books
+  - Information Technology                    :   31 books
+  - Neural Networks                           :   30 books
+  - Information Retrieval                     :   30 books
+  - Machine Learning                          :   29 books
+  - Cybersecurity                             :   29 books
+  - Data Mining                               :   28 books
+  - Data Science                              :   16 books
+  - Deep Learning                             :   13 books
+  - DevOps                                    :    6 books
+  - Design and Analysis of Algorithms         :    1 books
+  - Compiler Design                           :    1 books
+
+--------------------------------------------------------------------------------
+COLLECTION & VALIDATION METHODOLOGY
+--------------------------------------------------------------------------------
+1. Targeted API Discovery: Queried Open Library across 42 engineering and CS
+   subjects in 4 core categories: Computer Science, AI & Data Science,
+   Modern Technology, and Engineering/Mathematics.
+2. Rate Limit Compliance: Paced requests with 400ms pause and exponential backoff.
+3. Verification: Only authentic records retrieved from Open Library were included.
+   Zero records or metadata were fabricated.
+4. Stable Identifiers: Deduplication prioritized Open Library work keys (/works/OL...)
+   supplemented by normalized (title, author) compound keys.
+5. Safety: Preserved rare engineering titles and foreign editions.
+
+--------------------------------------------------------------------------------
+KNOWN DATASET LIMITATIONS
+--------------------------------------------------------------------------------
+- Some historical or niche engineering publications lack ISBNs in Open Library.
+- Multiple contributing authors are collapsed into semicolon-separated strings.
+- Some records contain generalized subject headings assigned by library cataloguers.
+================================================================================
