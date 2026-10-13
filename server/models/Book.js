@@ -29,6 +29,12 @@ const bookSchema = new mongoose.Schema(
       trim: true
     },
 
+    keywords: {
+      type: String,
+      default: "",
+      trim: true
+    },
+
     shelf: {
       type: String,
       required: [true, "Shelf is required"],

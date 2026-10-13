@@ -1,0 +1,101 @@
+type,original,expected,error_type
+correct,"gitanjali","gitanjali",none
+correct,"rabindranath tagore","rabindranath tagore",none
+correct,"the home and the world","the home and the world",none
+correct,"harry potter","harry potter",none
+correct,"harry potter and the philosopher's stone","harry potter and the philosopher's stone",none
+correct,"harry potter and the chamber of secrets","harry potter and the chamber of secrets",none
+correct,"machine learning","machine learning",none
+correct,"deep learning","deep learning",none
+correct,"artificial intelligence","artificial intelligence",none
+correct,"python","python",none
+correct,"python crash course","python crash course",none
+correct,"algorithms","algorithms",none
+correct,"data structures","data structures",none
+correct,"data structures and algorithms in python","data structures and algorithms in python",none
+correct,"database system concepts","database system concepts",none
+correct,"operating system concepts","operating system concepts",none
+correct,"computer networks","computer networks",none
+correct,"clean code","clean code",none
+correct,"computer science books","computer science books",none
+correct,"programming books","programming books",none
+correct,"fantasy books","fantasy books",none
+correct,"poetry books","poetry books",none
+correct,"indian literature","indian literature",none
+correct,"machine learning algorithms","machine learning algorithms",none
+correct,"artificial intelligence algorithms","artificial intelligence algorithms",none
+correct,"deep learning neural networks","deep learning neural networks",none
+correct,"python programming","python programming",none
+correct,"database sql","database sql",none
+correct,"computer networks tcp ip","computer networks tcp ip",none
+correct,"software engineering","software engineering",none
+correct,"book by rabindranath tagore","book by rabindranath tagore",none
+correct,"books by j k rowling","books by j k rowling",none
+correct,"books about machine learning","books about machine learning",none
+correct,"books about algorithms","books about algorithms",none
+correct,"find machine learning books","find machine learning books",none
+correct,"find python books","find python books",none
+correct,"find fantasy books","find fantasy books",none
+correct,"find poetry books","find poetry books",none
+correct,"show books by rabindranath tagore","show books by rabindranath tagore",none
+correct,"search computer networks","search computer networks",none
+correct,"search database books","search database books",none
+correct,"search artificial intelligence","search artificial intelligence",none
+correct,"show programming books","show programming books",none
+correct,"show computer science books","show computer science books",none
+correct,"find clean code","find clean code",none
+correct,"find deep learning books","find deep learning books",none
+correct,"find harry potter","find harry potter",none
+correct,"find gitanjali","find gitanjali",none
+correct,"find algorithms","find algorithms",none
+correct,"find database system concepts","find database system concepts",none
+correct,"find operating system concepts","find operating system concepts",none
+mistake,"gitanjali","gitanjali",spelling
+mistake,"ravindranath tagor","rabindranath tagore",spelling
+mistake,"the home and the wrld","the home and the world",natural_query
+mistake,"harry pottr","harry potter",spelling
+mistake,"harry potter and the philospher's stone","harry potter and the philosopher's stone",spelling
+mistake,"harry potter and the chambr of secrets","harry potter and the chamber of secrets",spelling
+mistake,"machne larning","machine learning",spelling
+mistake,"dep learning","deep learning",spelling
+mistake,"artifical intelligence","artificial intelligence",spelling
+mistake,"pythn","python",spelling
+mistake,"python crsh course","python crash course",spelling
+mistake,"algoritm","algorithm",spelling
+mistake,"data strctures","data structures",spelling
+mistake,"data structures and algoritms in python","data structures and algorithms in python",spelling
+mistake,"databse system concepts","database system concepts",spelling
+mistake,"operatng system concepts","operating system concepts",spelling
+mistake,"computer netwroks","computer networks",spelling
+mistake,"cleen code","clean code",spelling
+mistake,"computer scince books","computer science books",spelling
+mistake,"programing books","programming books",spelling
+mistake,"fantazy books","fantasy books",spelling
+mistake,"poerty books","poetry books",spelling
+mistake,"indain literature","indian literature",spelling
+mistake,"machine larning algoritms","machine learning algorithms",spelling
+mistake,"artifical intelligence algoritms","artificial intelligence algorithms",spelling
+mistake,"deep larning neural netwroks","deep learning neural networks",spelling
+mistake,"pythn programing","python programming",spelling
+mistake,"databse sql","database sql",spelling
+mistake,"computer netwroks tcp ip","computer networks tcp ip",spelling
+mistake,"software enginering","software engineering",spelling
+mistake,"book by ravindranath tagor","book by rabindranath tagore",natural_query
+mistake,"books by j k rowlng","books by j k rowling",natural_query
+mistake,"books about machne larning","books about machine learning",natural_query
+mistake,"books about algoritms","books about algorithms",natural_query
+mistake,"find machne larning books","find machine learning books",natural_query
+mistake,"find pythn books","find python books",natural_query
+mistake,"find fantazy books","find fantasy books",natural_query
+mistake,"find poerty books","find poetry books",natural_query
+mistake,"show books by ravindranath tagor","show books by rabindranath tagore",natural_query
+mistake,"search computer netwroks","search computer networks",natural_query
+mistake,"search databse books","search database books",natural_query
+mistake,"search artifical intelligence","search artificial intelligence",natural_query
+mistake,"show programing books","show programming books",natural_query
+mistake,"show computer scince books","show computer science books",natural_query
+mistake,"find cleen code","find clean code",natural_query
+mistake,"find dep larning books","find deep learning books",natural_query
+mistake,"find harry pottr","find harry potter",natural_query
+mistake,"find gitanjali book","find gitanjali book",natural_query
+mistake,"find algoritms","find algorithms",natural_query

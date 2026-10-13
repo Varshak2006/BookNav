@@ -1,0 +1,65 @@
+================================================================================
+LACS VOCABULARY GENERATION REPORT
+================================================================================
+Generated At:                     2026-10-11 12:17:17 UTC
+Primary Output File:              lacs_vocabulary.csv
+Total Books Analyzed:             1082
+Total Unique Vocabulary Terms:    25470
+  - Library Specific Terms:       25268
+  - General Language Terms:       202
+  - Multiword Expressions:        20579
+  - Unigram Terms:                4891
+Duplicate Terms Merged:           0
+
+--------------------------------------------------------------------------------
+TOP HIGH-FREQUENCY LIBRARY VOCABULARY TERMS
+--------------------------------------------------------------------------------
+  - computer                         (freq: 1024, type: unigram  , fields: author;category;description;keyword;subject;title)
+  - engineering                      (freq: 483, type: unigram  , fields: keyword;subject;title)
+  - science                          (freq: 443, type: unigram  , fields: category;subject;title)
+  - and                              (freq: 425, type: unigram  , fields: author;general;subject;title)
+  - systems                          (freq: 346, type: unigram  , fields: author;description;keyword;subject;title)
+  - computer science                 (freq: 321, type: multiword, fields: category;subject;title)
+  - of                               (freq: 260, type: unigram  , fields: author;description;general;subject;title)
+  - data                             (freq: 256, type: unigram  , fields: description;general;keyword;subject;title)
+  - information                      (freq: 247, type: unigram  , fields: author;subject;title)
+  - language                         (freq: 238, type: unigram  , fields: subject;title)
+  - computers                        (freq: 235, type: unigram  , fields: subject;title)
+  - programming                      (freq: 210, type: unigram  , fields: category;description;keyword;subject;title)
+  - technology                       (freq: 190, type: unigram  , fields: subject;title)
+  - networks                         (freq: 182, type: unigram  , fields: keyword;subject;title)
+  - general                          (freq: 176, type: unigram  , fields: general;subject;title)
+  - software                         (freq: 173, type: unigram  , fields: keyword;subject;title)
+  - the                              (freq: 168, type: unigram  , fields: author;general;subject;title)
+  - processing                       (freq: 168, type: unigram  , fields: subject;title)
+  - intelligence                     (freq: 167, type: unigram  , fields: author;description;keyword;subject;title)
+  - management                       (freq: 164, type: unigram  , fields: subject;title)
+  - computing                        (freq: 148, type: unigram  , fields: subject;title)
+  - learning                         (freq: 145, type: unigram  , fields: author;description;keyword;subject;title)
+  - program                          (freq: 144, type: unigram  , fields: general;subject;title)
+  - artificial                       (freq: 143, type: unigram  , fields: description;keyword;subject;title)
+  - computer program                 (freq: 138, type: multiword, fields: subject)
+  - electronic                       (freq: 137, type: unigram  , fields: author;subject;title)
+  - artificial intelligence          (freq: 134, type: multiword, fields: description;keyword;subject;title)
+  - program language                 (freq: 133, type: multiword, fields: subject)
+  - computer program language        (freq: 133, type: multiword, fields: subject)
+  - linear                           (freq: 124, type: unigram  , fields: subject;title)
+  - internet                         (freq: 120, type: unigram  , fields: subject;title)
+  - security                         (freq: 119, type: unigram  , fields: author;subject;title)
+  - machine                          (freq: 115, type: unigram  , fields: author;description;keyword;subject;title)
+  - in                               (freq: 113, type: unigram  , fields: author;general;subject;title)
+  - web                              (freq: 107, type: unigram  , fields: subject;title)
+
+--------------------------------------------------------------------------------
+VOCABULARY SOURCE DISTRIBUTION
+--------------------------------------------------------------------------------
+  - Library Metadata Sources:     25268 (99.2%)
+  - General Lexicon:                202 (0.8%)
+
+--------------------------------------------------------------------------------
+UPDATE STATUS
+--------------------------------------------------------------------------------
+Last Successful Update:           2026-10-11 12:17:17 UTC
+Failed / Incomplete Updates:      0 (All source files loaded successfully)
+Incremental Update Support:       Enabled (via sync_books / add_record / rebuild_index)
+================================================================================
