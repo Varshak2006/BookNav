@@ -1,132 +1,90 @@
-// const express = require("express");
-// const bcrypt = require("bcryptjs");
-// const jwt = require("jsonwebtoken");
-// const Admin = require("../models/Admin");
-
-// const router = express.Router();
-
-// // Admin Registration
-// router.post("/register", async (req, res) => {
-//   try {
-//     const { username, email, password } = req.body;
-
-//     // Check if admin already exists
-//     const existingAdmin = await Admin.findOne({
-//       $or: [{ username }, { email }]
-//     });
-
-//     if (existingAdmin) {
-//       return res.status(400).json({
-//         message: "Admin already exists with this username or email"
-//       });
-//     }
-
-//     // Hash password
-//     const hashedPassword = await bcrypt.hash(password, 10);
-
-//     // Create admin
-//     const admin = await Admin.create({
-//       username,
-//       email,
-//       password: hashedPassword
-//     });
-
-//     res.status(201).json({
-//       message: "Admin registered successfully",
-//       admin: {
-//         id: admin._id,
-//         username: admin.username,
-//         email: admin.email
-//       }
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       message: "Admin registration failed",
-//       error: error.message
-//     });
-//   }
-// });
-
-// // Admin Login
-// router.post("/login", async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-
-//     // Find admin
-//     const admin = await Admin.findOne({ email });
-
-//     if (!admin) {
-//       return res.status(401).json({
-//         message: "Invalid email or password"
-//       });
-//     }
-
-//     // Check password
-//     const isPasswordCorrect = await bcrypt.compare(
-//       password,
-//       admin.password
-//     );
-
-//     if (!isPasswordCorrect) {
-//       return res.status(401).json({
-//         message: "Invalid email or password"
-//       });
-//     }
-
-//     // Create admin session
-//     req.session.admin = {
-//       id: admin._id.toString(),
-//       username: admin.username,
-//       email: admin.email,
-//       role: "admin"
-//     };
-
-//     res.status(200).json({
-//       message: "Admin login successful",
-//       admin: {
-//         id: admin._id,
-//         username: admin.username,
-//         email: admin.email
-//       }
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       message: "Admin login failed",
-//       error: error.message
-//     });
-//   }
-// });
-// // Check current admin session
-// router.get("/session", (req, res) => {
-//   if (req.session.admin) {
-//     return res.status(200).json({
-//       loggedIn: true,
-//       admin: req.session.admin
-//     });
-//   }
-
-//   res.status(401).json({
-//     loggedIn: false,
-//     message: "No active admin session"
-//   });
-// });
-// module.exports=router;
-
-
 const express = require("express");
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 const Admin = require("../models/Admin");
 
 const router = express.Router();
 
-// Admin Registration
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// In-memory rate limiting map for admin login
+const adminLoginAttempts = new Map();
+function checkAdminLoginRateLimit(ip) {
+  const now = Date.now();
+  const windowMs = 15 * 60 * 1000; // 15 minutes
+  const maxAttempts = 5;
+  const record = adminLoginAttempts.get(ip) || { count: 0, resetAt: now + windowMs };
+
+  if (now > record.resetAt) {
+    record.count = 1;
+    record.resetAt = now + windowMs;
+    adminLoginAttempts.set(ip, record);
+    return true;
+  }
+
+  if (record.count >= maxAttempts) {
+    return false;
+  }
+
+  record.count++;
+  adminLoginAttempts.set(ip, record);
+  return true;
+}
+
+function safeTokenCompare(provided, expected) {
+  if (!provided || !expected || typeof provided !== "string" || typeof expected !== "string") {
+    return false;
+  }
+  const a = Buffer.from(provided);
+  const b = Buffer.from(expected);
+  if (a.length !== b.length) return false;
+  return crypto.timingSafeEqual(a, b);
+}
+
+// Admin Registration (Guarded: allows first bootstrap admin, otherwise requires existing admin session or ADMIN_SETUP_TOKEN)
 router.post("/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
+    // Input Validation
+    if (!username || typeof username !== "string" || username.trim().length < 3 || username.trim().length > 50) {
+      return res.status(400).json({
+        message: "Username must be a valid string between 3 and 50 characters"
+      });
+    }
+
+    if (!email || typeof email !== "string" || !EMAIL_REGEX.test(email.trim()) || email.trim().length > 100) {
+      return res.status(400).json({
+        message: "A valid email address is required"
+      });
+    }
+
+    if (!password || typeof password !== "string" || password.length < 6) {
+      return res.status(400).json({
+        message: "Password must be at least 6 characters long"
+      });
+    }
+
+    const cleanUsername = username.trim();
+    const cleanEmail = email.trim().toLowerCase();
+
+    // Authorization check: First admin can bootstrap. Subsequent admins require existing admin or setup token.
+    const adminCount = await Admin.countDocuments();
+    if (adminCount > 0) {
+      const hasAdminSession = req.session && req.session.admin && req.session.admin.role === "admin";
+      const setupToken = req.headers["x-admin-setup-token"];
+      const hasValidToken = safeTokenCompare(setupToken, process.env.ADMIN_SETUP_TOKEN);
+
+      if (!hasAdminSession && !hasValidToken) {
+        return res.status(403).json({
+          message: "Registration restricted: Authorization required to create additional admin accounts"
+        });
+      }
+    }
+
     // Check if admin already exists
     const existingAdmin = await Admin.findOne({
-      $or: [{ username }, { email }]
+      $or: [{ username: cleanUsername }, { email: cleanEmail }]
     });
 
     if (existingAdmin) {
@@ -140,8 +98,8 @@ router.post("/register", async (req, res) => {
 
     // Create admin
     const admin = await Admin.create({
-      username,
-      email,
+      username: cleanUsername,
+      email: cleanEmail,
       password: hashedPassword
     });
 
@@ -156,7 +114,7 @@ router.post("/register", async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: "Admin registration failed",
-      error: error.message
+      error: "Internal server error during registration"
     });
   }
 });
@@ -164,10 +122,25 @@ router.post("/register", async (req, res) => {
 // Admin Login
 router.post("/login", async (req, res) => {
   try {
+    const clientIp = req.ip || req.connection.remoteAddress || "unknown";
+    if (!checkAdminLoginRateLimit(clientIp)) {
+      return res.status(429).json({
+        message: "Too many login attempts. Please wait 15 minutes before trying again."
+      });
+    }
+
     const { email, password } = req.body;
 
+    if (!email || !password || typeof email !== "string" || typeof password !== "string") {
+      return res.status(400).json({
+        message: "Email and password are required"
+      });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+
     // Find admin
-    const admin = await Admin.findOne({ email });
+    const admin = await Admin.findOne({ email: cleanEmail });
 
     if (!admin) {
       return res.status(401).json({
@@ -187,33 +160,43 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // Create admin session
-    req.session.admin = {
+    // Create admin session (prevent session fixation)
+    const adminSessionData = {
       id: admin._id.toString(),
       username: admin.username,
       email: admin.email,
       role: "admin"
     };
 
-    res.status(200).json({
-      message: "Admin login successful",
-      admin: {
-        id: admin._id,
-        username: admin.username,
-        email: admin.email
-      }
-    });
+    if (req.session.regenerate) {
+      req.session.regenerate((err) => {
+        if (err) {
+          return res.status(500).json({ message: "Session generation failed", error: "Session creation error" });
+        }
+        req.session.admin = adminSessionData;
+        return res.status(200).json({
+          message: "Admin login successful",
+          admin: adminSessionData
+        });
+      });
+    } else {
+      req.session.admin = adminSessionData;
+      return res.status(200).json({
+        message: "Admin login successful",
+        admin: adminSessionData
+      });
+    }
   } catch (error) {
     res.status(500).json({
       message: "Admin login failed",
-      error: error.message
+      error: "Internal server error during login"
     });
   }
 });
 
 // Check current admin session
 router.get("/session", (req, res) => {
-  if (req.session.admin) {
+  if (req.session && req.session.admin) {
     return res.status(200).json({
       loggedIn: true,
       admin: req.session.admin

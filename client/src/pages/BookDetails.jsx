@@ -1,46 +1,59 @@
 import { useEffect, useState } from "react";
 import bookCover from "../assets/the-c.jpg";
+import { API_BASE_URL } from "../config/api";
 
 function BookDetails({ bookId, onBack }) {
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchBook();
-  }, []);
-
-  const fetchBook = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/books/${bookId}`
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setBook(data);
-      } else {
-        alert(data.message || "Book not found");
+    let ignore = false;
+    async function loadBook() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/books/${bookId}`);
+        const data = await response.json();
+        if (!ignore) {
+          if (response.ok) {
+            setBook(data);
+          } else {
+            setError(data.message || "Book not found");
+          }
+        }
+      } catch (err) {
+        if (!ignore) {
+          console.error("Fetch book error:", err);
+          setError("Could not connect to the backend");
+        }
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
       }
-    } catch (error) {
-      console.error("Fetch book error:", error);
-      alert("Could not connect to the backend");
-    } finally {
-      setLoading(false);
     }
-  };
+
+    loadBook();
+    return () => {
+      ignore = true;
+    };
+  }, [bookId]);
 
   if (loading) {
     return <p>Loading book details...</p>;
   }
 
-  if (!book) {
-    return <p>Book not found.</p>;
+  if (error || !book) {
+    return (
+      <div className="book-details-page">
+        <button className="back-search-button" onClick={onBack}>
+          ← Back to Search
+        </button>
+        <p style={{ marginTop: "24px", color: "#e53e3e" }}>{error || "Book not found."}</p>
+      </div>
+    );
   }
 
- 
- 
-   return (
+  return (
     <div className="book-details-page">
 
       <button
@@ -59,10 +72,10 @@ function BookDetails({ bookId, onBack }) {
 
         <div className="book-details-cover">
           <img
-  src={bookCover}
-  alt={book.title}
-  className="book-details-image"
-/>
+            src={bookCover}
+            alt={book.title}
+            className="book-details-image"
+          />
         </div>
 
         <div className="book-details-content">
@@ -79,8 +92,15 @@ function BookDetails({ bookId, onBack }) {
 
           <div className="book-details-description">
             <span>Description</span>
-            <p>{book.description}</p>
+            <p>{book.description || "No description provided."}</p>
           </div>
+
+          {book.keywords && (
+            <div className="book-details-description" style={{ marginTop: "12px" }}>
+              <span>Keywords</span>
+              <p style={{ fontStyle: "italic", color: "#4a5568" }}>{book.keywords}</p>
+            </div>
+          )}
 
           <div className="book-details-location">
 

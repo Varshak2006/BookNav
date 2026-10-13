@@ -1,0 +1,81 @@
+{
+  "dataset": "E:\\LACS_library_spell_correction_project\\data\\evaluation_dataset.csv",
+  "all_queries": {
+    "baseline_levenshtein": {
+      "queries": 220,
+      "top1_accuracy": 0.8590909090909091,
+      "top3_accuracy": 0.8590909090909091,
+      "no_change_accuracy": 0.8454545454545455,
+      "false_correction_rate": 0.15454545454545454,
+      "overcorrection_rate": 0.15454545454545454,
+      "average_latency_ms": 0.5027563632624648,
+      "p50_latency_ms": 0.5304999940562993,
+      "p95_latency_ms": 1.6183000116143376,
+      "p99_latency_ms": 1.7456000205129385
+    },
+    "lacs": {
+      "queries": 220,
+      "top1_accuracy": 0.9318181818181818,
+      "top3_accuracy": 1.0,
+      "no_change_accuracy": 1.0,
+      "false_correction_rate": 0.0,
+      "overcorrection_rate": 0.0,
+      "average_latency_ms": 0.20380727100101384,
+      "p50_latency_ms": 0.18689999706111848,
+      "p95_latency_ms": 0.683299993397668,
+      "p99_latency_ms": 0.8564000017940998
+    }
+  },
+  "noisy_queries": {
+    "baseline_levenshtein": {
+      "queries": 110,
+      "top1_accuracy": 0.8727272727272727,
+      "top3_accuracy": 0.8727272727272727,
+      "no_change_accuracy": 0.0,
+      "false_correction_rate": 0.0,
+      "overcorrection_rate": 0.0,
+      "average_latency_ms": 0.9940545455637303,
+      "p50_latency_ms": 0.8148000051733106,
+      "p95_latency_ms": 1.6768000205047429,
+      "p99_latency_ms": 1.8944000185001642
+    },
+    "lacs": {
+      "queries": 110,
+      "top1_accuracy": 0.8636363636363636,
+      "top3_accuracy": 1.0,
+      "no_change_accuracy": 0.0,
+      "false_correction_rate": 0.0,
+      "overcorrection_rate": 0.0,
+      "average_latency_ms": 0.38965545245446265,
+      "p50_latency_ms": 0.3096000000368804,
+      "p95_latency_ms": 0.7377000001724809,
+      "p99_latency_ms": 0.8115999808069319
+    }
+  },
+  "correct_queries": {
+    "baseline_levenshtein": {
+      "queries": 110,
+      "top1_accuracy": 0.8454545454545455,
+      "top3_accuracy": 0.8454545454545455,
+      "no_change_accuracy": 0.8454545454545455,
+      "false_correction_rate": 0.15454545454545454,
+      "overcorrection_rate": 0.15454545454545454,
+      "average_latency_ms": 0.029257272465408525,
+      "p50_latency_ms": 0.000800006091594696,
+      "p95_latency_ms": 0.21349999587982893,
+      "p99_latency_ms": 0.34089997643604875
+    },
+    "lacs": {
+      "queries": 110,
+      "top1_accuracy": 1.0,
+      "top3_accuracy": 1.0,
+      "no_change_accuracy": 1.0,
+      "false_correction_rate": 0.0,
+      "overcorrection_rate": 0.0,
+      "average_latency_ms": 0.009161817830648612,
+      "p50_latency_ms": 0.008100003469735384,
+      "p95_latency_ms": 0.01719998545013368,
+      "p99_latency_ms": 0.01920000067912042
+    }
+  }
+}

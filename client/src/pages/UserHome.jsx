@@ -1,157 +1,6 @@
-// import { useEffect, useState } from "react";
-// import BookDetails from "./BookDetails";
-
-// function UserHome() {
-//   const [books, setBooks] = useState([]);
-//   const [searchTerm, setSearchTerm] = useState("");
-//   const [loading, setLoading] = useState(true);
-//   const [selectedBookId, setSelectedBookId] = useState(null);
-// const [searchLoading, setSearchLoading] = useState(false);
-//   useEffect(() => {
-//     fetchBooks();
-//   }, []);
-
-//   const fetchBooks = async () => {
-//     try {
-//       const response = await fetch(
-//         "http://localhost:5000/api/books"
-//       );
-
-//       const data = await response.json();
-
-//       if (response.ok) {
-//         setBooks(data);
-//       } else {
-//         alert("Failed to fetch books");
-//       }
-//     } catch (error) {
-//       console.error("Fetch books error:", error);
-//       alert("Could not connect to the backend");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-// const searchBooks = async (query) => {
-//   setSearchLoading(true);
-
-//   try {
-//     const response = await fetch(
-//       `http://localhost:5000/api/books/search?q=${encodeURIComponent(query)}`
-//     );
-
-//     const data = await response.json();
-
-//     if (response.ok) {
-//       setBooks(data);
-//     } else {
-//       console.error(data.message);
-//     }
-//    } catch (error) {
-//     console.error("Search books error:", error);
-//   } finally {
-//     setSearchLoading(false);
-//   }
-// };
-//   // Show book details when a book is selected
-//   if (selectedBookId) {
-//     return (
-//       <BookDetails
-//         bookId={selectedBookId}
-//         onBack={() => setSelectedBookId(null)}
-//       />
-//     );
-//   }
-
-//   const filteredBooks = searchTerm.trim()
-//   ? books.filter((book) => {
-//       const search = searchTerm.toLowerCase();
-
-//       return (
-//         book.title.toLowerCase().includes(search) ||
-//         book.author.toLowerCase().includes(search) ||
-//         book.category.toLowerCase().includes(search)
-//       );
-//     })
-//   : books;
-
-//   return (
-//     <div>
-//       <h1>BookNav</h1>
-// <p>Welcome to the BookNav Library</p>
-// <h2>Find a Book</h2>
-
-//       <input
-//         type="text"
-//         placeholder="Search by title, author or category..."
-//         value={searchTerm}
-//        onChange={(e) => {
-//   const value = e.target.value;
-//   setSearchTerm(value);
-
-//   if (value.trim() === "") {
-//     fetchBooks();
-//   } else {
-//     searchBooks(value);
-//   }
-// }}     />
-// {searchLoading && <p>Searching...</p>}
-
-//       <br />
-//       <br />
-
-//       {loading ? (
-//         <p>Loading books...</p>
-//       ) : filteredBooks.length === 0 ? (
-//        <p>No books found for "{searchTerm}".</p>
-//       ) : (
-//         <div>
-//           {filteredBooks.map((book) => (
-//             <div key={book._id}>
-//               <h3>{book.title}</h3>
-
-//               <p>
-//                 <strong>Author:</strong> {book.author}
-//               </p>
-
-//               <p>
-//                 <strong>Category:</strong> {book.category}
-//               </p>
-// <p><strong>Description:</strong> {book.description}</p>
-//               <p>
-//                 <strong>Shelf:</strong> {book.shelf}
-//               </p>
-
-//               <p>
-//                 <strong>Rack:</strong> {book.rack}
-//               </p>
-
-//               <p>
-//                 <strong>Location:</strong> {book.location}
-//               </p>
-
-//               <button
-//                 onClick={() => setSelectedBookId(book._id)}
-//               >
-//                 View Details
-//               </button>
-
-//               <hr />
-//             </div>
-//           ))}
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
-
-// export default UserHome;
-
-
-
-
-
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import BookDetails from "./BookDetails";
+import { API_BASE_URL } from "../config/api";
 
 function UserHome() {
   const [books, setBooks] = useState([]);
@@ -159,133 +8,187 @@ function UserHome() {
   const [loading, setLoading] = useState(true);
   const [selectedBookId, setSelectedBookId] = useState(null);
   const [searchLoading, setSearchLoading] = useState(false);
-  const [filters, setFilters] = useState([]);
-  const [filterField, setFilterField] = useState("category");
-  const [filterValue, setFilterValue] = useState("");
-  const [filterLogic, setFilterLogic] = useState("AND");
-  useEffect(() => {
-    fetchBooks();
+  const [searchError, setSearchError] = useState(null);
+  const [correctionInfo, setCorrectionInfo] = useState(null);
+
+  // References for request cancellation and sequencing
+  const abortControllerRef = useRef(null);
+  const latestRequestIdRef = useRef(0);
+  const debounceTimerRef = useRef(null);
+
+  const fetchBooks = useCallback(async () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    const reqId = ++latestRequestIdRef.current;
+
+    setLoading(true);
+    setSearchError(null);
+    setCorrectionInfo(null);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/books`, {
+        signal: controller.signal
+      });
+
+      const data = await response.json();
+
+      if (reqId === latestRequestIdRef.current) {
+        if (response.ok) {
+          setBooks(Array.isArray(data) ? data : []);
+        } else {
+          setSearchError("Failed to fetch library collection");
+        }
+      }
+    } catch (error) {
+      if (error.name !== "AbortError") {
+        console.error("Fetch books error:", error);
+        if (reqId === latestRequestIdRef.current) {
+          setSearchError("Could not connect to the backend");
+        }
+      }
+    } finally {
+      if (reqId === latestRequestIdRef.current) {
+        setLoading(false);
+      }
+    }
   }, []);
 
-  const fetchBooks = async () => {
-    try {
-      const response = await fetch(
-        "http://localhost:5000/api/books"
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setBooks(data);
-      } else {
-        alert("Failed to fetch books");
-      }
-    } catch (error) {
-      console.error("Fetch books error:", error);
-      alert("Could not connect to the backend");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const searchBooks = async (query) => {
-    setSearchLoading(true);
-
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/books/search?q=${encodeURIComponent(query)}`
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setBooks(data);
-      } else {
-        console.error(data.message);
-      }
-    } catch (error) {
-      console.error("Search books error:", error);
-    } finally {
-      setSearchLoading(false);
-    }
-  };
-
-  const addFilter = () => {
-    if (!filterValue.trim()) {
-      alert("Please enter a filter value");
+  const executeSearch = useCallback(async (query, overrideMode = null, bypassCorrection = false) => {
+    const trimmed = query.trim();
+    if (!trimmed) {
+      fetchBooks();
       return;
     }
 
-    const newFilter = {
-      id: Date.now(),
-      field: filterField,
-      value: filterValue.trim(),
-      active: true
-    };
+    // Cancel any in-flight search request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    const reqId = ++latestRequestIdRef.current;
 
-    setFilters((previousFilters) => [
-      ...previousFilters,
-      newFilter
-    ]);
-
-    setFilterValue("");
-  };
-  
-  const toggleFilter = (id) => {
-    setFilters((previousFilters) =>
-      previousFilters.map((filter) =>
-        filter.id === id
-          ? { ...filter, active: !filter.active }
-          : filter
-      )
-    );
-  };
-
-  const removeFilter = (id) => {
-    setFilters((previousFilters) =>
-      previousFilters.filter((filter) => filter.id !== id)
-    );
-  };
-  
-  const applyFilters = async () => {
     setSearchLoading(true);
+    setSearchError(null);
 
     try {
-      const params = new URLSearchParams();
-
-      if (searchTerm.trim()) {
-        params.set("q", searchTerm.trim());
-      }
-
-      params.set("logic", filterLogic);
-
-      filters
-        .filter((filter) => filter.active)
-        .forEach((filter) => {
-          params.append(
-            "filters",
-            `${filter.field}:${filter.value}`
-          );
-        });
-
+      const modeParam = overrideMode ? `&mode=${encodeURIComponent(overrideMode)}` : "";
+      const correctParam = bypassCorrection ? `&correct=false` : "";
       const response = await fetch(
-        `http://localhost:5000/api/books/search?${params.toString()}`
+        `${API_BASE_URL}/books/search?q=${encodeURIComponent(trimmed)}${modeParam}${correctParam}`,
+        { signal: controller.signal }
       );
 
       const data = await response.json();
 
-      if (response.ok) {
-        setBooks(data);
-      } else {
-        alert(data.message || "Failed to apply filters");
+      // Only update state if this is still the most recent request
+      if (reqId === latestRequestIdRef.current) {
+        if (response.ok) {
+          if (data && Array.isArray(data.results)) {
+            setBooks(data.results);
+            if (data.correctionApplied || data.suggestion) {
+              setCorrectionInfo({
+                query: data.query,
+                effectiveQuery: data.effectiveQuery,
+                correctionApplied: Boolean(data.correctionApplied),
+                correctedQuery: data.correctedQuery,
+                suggestion: data.suggestion,
+                confidence: data.confidence,
+                confidenceLevel: data.confidenceLevel
+              });
+            } else {
+              setCorrectionInfo(null);
+            }
+          } else if (Array.isArray(data)) {
+            setBooks(data);
+            setCorrectionInfo(null);
+          } else {
+            setBooks([]);
+            setCorrectionInfo(null);
+          }
+        } else {
+          setBooks([]);
+          setCorrectionInfo(null);
+          setSearchError(data.message || "Search failed");
+        }
       }
     } catch (error) {
-      console.error("Apply filters error:", error);
-      alert("Could not connect to the backend");
+      if (error.name !== "AbortError") {
+        console.error("Search books error:", error);
+        if (reqId === latestRequestIdRef.current) {
+          setBooks([]);
+          setCorrectionInfo(null);
+          setSearchError("Search service is temporarily unavailable");
+        }
+      }
     } finally {
-      setSearchLoading(false);
+      if (reqId === latestRequestIdRef.current) {
+        setSearchLoading(false);
+      }
+    }
+  }, [fetchBooks]);
+
+  useEffect(() => {
+    let ignore = false;
+    async function loadInitial() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/books`);
+        const data = await response.json();
+        if (!ignore && response.ok) {
+          setBooks(Array.isArray(data) ? data : []);
+        }
+      } catch (err) {
+        if (!ignore) {
+          console.error("Initial book fetch error:", err);
+          setSearchError("Could not connect to the backend");
+        }
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
+      }
+    }
+    loadInitial();
+
+    return () => {
+      ignore = true;
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    if (value.trim() === "") {
+      fetchBooks();
+    } else {
+      debounceTimerRef.current = setTimeout(() => {
+        executeSearch(value);
+      }, 300);
     }
   };
+
+  const handleSearchSubmit = (e) => {
+    if (e) e.preventDefault();
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    executeSearch(searchTerm);
+  };
+
   if (selectedBookId) {
     return (
       <BookDetails
@@ -294,58 +197,10 @@ function UserHome() {
       />
     );
   }
-// const getCombinedScore = (book) => {
-//   const textScore = scoreBook(book);
 
-//   const filterScore = filters
-//     .filter((filter) => filter.active)
-//     .reduce((score, filter) => {
-//       const bookValue = String(book[filter.field] ?? "").toLowerCase();
-//       const filterValue = filter.value.toLowerCase();
+  // The backend owns search result selection — directly display returned books
+  const displayedBooks = books;
 
-//       return bookValue.includes(filterValue) ? score + 2 : score;
-//     }, 0);
-
-//   return textScore + filterScore;
-// };
-const getTextScore = (book) => {
-  const query = searchTerm.trim().toLowerCase();
-
-  if (!query) return 0;
-
-  const title = book.title?.toLowerCase().trim() || "";
-  const author = book.author?.toLowerCase().trim() || "";
-  const category = book.category?.toLowerCase().trim() || "";
-
-  let score = 0;
-
-  if (title === query) score += 10;
-  else if (title.includes(query)) score += 5;
-
-  if (author === query) score += 6;
-  else if (author.includes(query)) score += 3;
-
-  if (category === query) score += 4;
-  else if (category.includes(query)) score += 2;
-
-  return score;
-};
- const getFilterScore = (book) =>
-  filters
-    .filter((filter) => filter.active)
-    .reduce((score, filter) => {
-      const bookValue = String(book[filter.field] ?? "").toLowerCase();
-      const filterValue = filter.value.toLowerCase();
-
-      return bookValue.includes(filterValue) ? score + 2 : score;
-    }, 0);
-
-const filteredBooks = [...books].sort((a, b) => {
-  const scoreA = getTextScore(a) + getFilterScore(a);
-  const scoreB = getTextScore(b) + getFilterScore(b);
-
-  return scoreB - scoreA;
-});
   return (
     <div className="user-home">
 
@@ -358,116 +213,110 @@ const filteredBooks = [...books].sort((a, b) => {
 
           <p className="hero-description">
             Search through the library and discover books
-            by title, author or category.
+            by title, author or category with semantic AI search.
           </p>
         </div>
 
-        <div className="search-box">
+        <form className="search-box" onSubmit={handleSearchSubmit}>
 
           <input
+            id="search-input"
             type="text"
-            placeholder="Search by title, author or category..."
+            placeholder="Search by title, author, category or topic..."
             value={searchTerm}
-            onChange={(e) => {
-              const value = e.target.value;
-              setSearchTerm(value);
-
-              if (value.trim() === "") {
-                fetchBooks();
-              } else {
-                searchBooks(value);
-              }
-            }}
+            onChange={handleInputChange}
           />
 
-         <button
-  className="search-button"
-  type="button"
-  onClick={() => searchBooks(searchTerm)}
->
-  Search
-</button>
+          <button id="search-submit-btn" type="submit" className="search-button">
+            Search
+          </button>
 
-        </div>
+        </form>
 
-        <div className="filter-panel">
-          <h3>Filter Books</h3>
-
-          <div className="filter-controls">
-            <select
-              value={filterField}
-              onChange={(e) => setFilterField(e.target.value)}
-            >
-              <option value="title">Title</option>
-              <option value="author">Author</option>
-              <option value="category">Category</option>
-              <option value="shelf">Shelf</option>
-              <option value="rack">Rack</option>
-              <option value="location">Location</option>
-            </select>
-
-            <input
-              type="text"
-              placeholder="Enter filter value..."
-              value={filterValue}
-              onChange={(e) => setFilterValue(e.target.value)}
-            />
-
-            <button type="button" onClick={addFilter}>
-              Add Filter
-            </button>
-          </div>
-
-          <div className="filter-logic">
-            <label htmlFor="filter-logic">Match filters using:</label>
-
-            <select
-              id="filter-logic"
-              value={filterLogic}
-              onChange={(e) => setFilterLogic(e.target.value)}
-            >
-              <option value="AND">AND — match all</option>
-              <option value="OR">OR — match any</option>
-            </select>
-
-            <button type="button" onClick={applyFilters}>
-              Apply Filters
-            </button>
-          </div>
-
-          <div className="active-filters">
-            {filters.length === 0 ? (
-              <p>No filters added yet.</p>
-            ) : (
-              filters.map((filter) => (
-                <div className="filter-item" key={filter.id}>
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked={filter.active}
-                      onChange={() => toggleFilter(filter.id)}
-                    />
-
-                    <span>
-                      {filter.field}: {filter.value}
-                      {!filter.active && " (Inactive)"}
-                    </span>
-                  </label>
-
-                  <button
-                    type="button"
-                    onClick={() => removeFilter(filter.id)}
-                  >
-                    Remove
-                  </button>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
         {searchLoading && (
-          <p className="search-status">
+          <p className="search-status" id="search-status">
             Searching...
+          </p>
+        )}
+
+        {/* LACS High-confidence auto-correction notification */}
+        {correctionInfo && correctionInfo.correctionApplied && correctionInfo.correctedQuery && (
+          <div className="correction-banner" id="correction-banner" style={{
+            marginTop: "12px",
+            padding: "8px 14px",
+            backgroundColor: "#ebf8ff",
+            border: "1px solid #bee3f8",
+            borderRadius: "6px",
+            color: "#2b6cb0",
+            fontSize: "0.95rem"
+          }}>
+            <span>
+              Showing results for: <strong><em>{correctionInfo.correctedQuery}</em></strong>
+            </span>
+            <span style={{ marginLeft: "8px", fontSize: "0.85rem", color: "#4a5568" }}>
+              (spelling corrected from "{correctionInfo.query}")
+            </span>
+            <button
+              id="search-original-query-btn"
+              type="button"
+              onClick={() => {
+                setSearchTerm(correctionInfo.query);
+                executeSearch(correctionInfo.query, "exact", true);
+              }}
+              style={{
+                marginLeft: "12px",
+                background: "none",
+                border: "none",
+                color: "#3182ce",
+                textDecoration: "underline",
+                cursor: "pointer",
+                fontSize: "0.85rem"
+              }}
+            >
+              Search instead for "{correctionInfo.query}"
+            </button>
+          </div>
+        )}
+
+        {/* LACS Medium-confidence "Did you mean?" suggestion */}
+        {correctionInfo && !correctionInfo.correctionApplied && correctionInfo.suggestion && (
+          <div className="suggestion-banner" id="suggestion-banner" style={{
+            marginTop: "12px",
+            padding: "8px 14px",
+            backgroundColor: "#fffaf0",
+            border: "1px solid #feebc8",
+            borderRadius: "6px",
+            color: "#c05621",
+            fontSize: "0.95rem"
+          }}>
+            <span>Did you mean: </span>
+            <button
+              id="search-suggestion-btn"
+              type="button"
+              onClick={() => {
+                setSearchTerm(correctionInfo.suggestion);
+                executeSearch(correctionInfo.suggestion);
+              }}
+              style={{
+                background: "none",
+                border: "none",
+                color: "#dd6b20",
+                fontWeight: "bold",
+                textDecoration: "underline",
+                cursor: "pointer",
+                padding: "0 4px",
+                fontSize: "0.95rem"
+              }}
+            >
+              {correctionInfo.suggestion}
+            </button>
+            <span>?</span>
+          </div>
+        )}
+
+        {searchError && (
+          <p className="search-error" id="search-error" style={{ color: "#e53e3e", marginTop: "8px", fontSize: "0.9rem" }}>
+            {searchError}
           </p>
         )}
       </section>
@@ -486,10 +335,10 @@ const filteredBooks = [...books].sort((a, b) => {
             </h2>
           </div>
 
-          {!loading && (
-            <span className="book-count">
-              {filteredBooks.length}{" "}
-              {filteredBooks.length === 1
+          {!loading && !searchLoading && !searchError && (
+            <span className="book-count" id="book-count">
+              {displayedBooks.length}{" "}
+              {displayedBooks.length === 1
                 ? "Book"
                 : "Books"}
             </span>
@@ -500,20 +349,28 @@ const filteredBooks = [...books].sort((a, b) => {
           <div className="state-card">
             <p>Loading books...</p>
           </div>
-        ) : filteredBooks.length === 0 ? (
-          <div className="state-card empty-state">
+        ) : searchError ? (
+          <div className="state-card error-state" id="error-state-card" style={{ borderColor: "#feb2b2" }}>
+            <div className="empty-icon" style={{ color: "#e53e3e" }}>⚠</div>
+            <h3 style={{ color: "#c53030" }}>Search Service Error</h3>
+            <p>{searchError}</p>
+          </div>
+        ) : displayedBooks.length === 0 ? (
+          <div className="state-card empty-state" id="empty-state-card">
             <div className="empty-icon">⌕</div>
 
             <h3>No books found</h3>
 
             <p>
-              No books found for "{searchTerm}".
+              {searchTerm.trim()
+                ? `No books found for "${searchTerm}".`
+                : "No books available in the collection."}
             </p>
           </div>
         ) : (
-          <div className="books-grid">
+          <div className="books-grid" id="books-grid">
 
-            {filteredBooks.map((book) => (
+            {displayedBooks.map((book) => (
               <div
                 className="book-card"
                 key={book._id}
@@ -530,11 +387,7 @@ const filteredBooks = [...books].sort((a, b) => {
                 </div>
 
                 <h3>{book.title}</h3>
-{searchTerm.trim() !== "" && (
-  <p className="relevance-score">
-    Relevance score: {getTextScore(book) + getFilterScore(book)}
-  </p>
-)}
+
                 <p className="book-author">
                   by {book.author}
                 </p>
