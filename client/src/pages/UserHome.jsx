@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import BookDetails from "./BookDetails";
 import { API_BASE_URL } from "../config/api";
+import BookNavigation from "./BookNavigation";
 
 function UserHome() {
   const [books, setBooks] = useState([]);
@@ -10,6 +11,7 @@ function UserHome() {
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState(null);
   const [correctionInfo, setCorrectionInfo] = useState(null);
+  const [navigationBookId, setNavigationBookId] = useState(null);
 
   // References for request cancellation and sequencing
   const abortControllerRef = useRef(null);
@@ -189,15 +191,23 @@ function UserHome() {
     executeSearch(searchTerm);
   };
 
-  if (selectedBookId) {
-    return (
-      <BookDetails
-        bookId={selectedBookId}
-        onBack={() => setSelectedBookId(null)}
-      />
-    );
-  }
+  if (navigationBookId) {
+  return (
+    <BookNavigation
+      bookId={navigationBookId}
+      onBack={() => setNavigationBookId(null)}
+    />
+  );
+}
 
+if (selectedBookId) {
+  return (
+    <BookDetails
+      bookId={selectedBookId}
+      onBack={() => setSelectedBookId(null)}
+    />
+  );
+}
   // The backend owns search result selection — directly display returned books
   const displayedBooks = books;
 
@@ -395,6 +405,50 @@ function UserHome() {
                 <p className="book-description">
                   {book.description}
                 </p>
+                
+                 {book.keywords && (
+                 <div
+                    className="book-keyword-filters"
+                    style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: "8px",
+                    margin: "12px 0"
+                    }}
+  >
+                    {[
+                   ...new Set(
+                    String(book.keywords)
+                    .split(/[,;\n]+/)
+                    .map((keyword) => keyword.trim())
+                    .filter(Boolean)
+                    )
+                    ].map((keyword) => (
+                    <button
+                    key={keyword.toLowerCase()}
+                    type="button"
+                    title={`Search for ${keyword}`}
+                    onClick={() => {
+                    setSearchTerm(keyword);
+                    executeSearch(keyword);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    style={{
+                    border: "1px solid #b8ded8",
+                    borderRadius: "20px",
+                    padding: "6px 12px",
+                    background: "#edf8f5",
+                    color: "#125e59",
+                    cursor: "pointer",
+                    fontSize: "0.8rem"
+                     }}
+                     >
+                    {keyword}
+                    </button>
+                    ))}
+                    </div>
+                    )}
+
 
                 <div className="book-location">
 
@@ -415,14 +469,21 @@ function UserHome() {
 
                 </div>
 
+                <div className="book-card-actions">
                 <button
-                  className="details-button"
-                  onClick={() =>
-                    setSelectedBookId(book._id)
-                  }
-                >
+                 className="details-button"
+                  onClick={() => setSelectedBookId(book._id)}
+                 >
                   View Details →
-                </button>
+                 </button>
+
+                 <button
+                 className="navigate-button"
+                onClick={() => setNavigationBookId(book._id)}
+                 >
+                 Navigate →
+                 </button>
+                 </div>
 
               </div>
             ))}

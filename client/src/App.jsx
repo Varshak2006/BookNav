@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import booknavLogo from "./assets/booknav.png";
 import AdminLogin from "./pages/AdminLogin";
@@ -5,6 +6,7 @@ import AdminBooks from "./pages/AdminBooks";
 import UserLogin from "./pages/UserLogin";
 import UserRegister from "./pages/UserRegister";
 import UserHome from "./pages/UserHome";
+import BookNavigation from "./pages/BookNavigation";
 import { API_BASE_URL } from "./config/api";
 import "./App.css";
 
@@ -14,14 +16,36 @@ function App() {
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
   const [checkingSession, setCheckingSession] = useState(true);
 
+  // Read the book ID from a QR-code URL, if present.
+  const [navigationBookId, setNavigationBookId] = useState(() => {
+    return new URLSearchParams(window.location.search).get("navigate");
+  });
+
+  // Handle QR URLs and browser back/forward navigation.
+  useEffect(() => {
+    const handleLocationChange = () => {
+      const params = new URLSearchParams(window.location.search);
+      setNavigationBookId(params.get("navigate"));
+    };
+
+    window.addEventListener("popstate", handleLocationChange);
+
+    return () => {
+      window.removeEventListener("popstate", handleLocationChange);
+    };
+  }, []);
+
+  // Check existing user and admin sessions.
   useEffect(() => {
     let ignore = false;
+
     const checkSessions = async () => {
       try {
-        // Check Admin Session
-        const adminResponse = await fetch(`${API_BASE_URL}/admin/session`, {
-          credentials: "include"
-        });
+        // Check Admin Session.
+        const adminResponse = await fetch(
+          `${API_BASE_URL}/admin/session`,
+          { credentials: "include" }
+        );
 
         if (!ignore && adminResponse.ok) {
           setIsAdminLoggedIn(true);
@@ -29,20 +53,18 @@ function App() {
           return;
         }
 
-        // Check User Session
-        const userResponse = await fetch(`${API_BASE_URL}/user/session`, {
-          credentials: "include"
-        });
+        // Check User Session.
+        const userResponse = await fetch(
+          `${API_BASE_URL}/user/session`,
+          { credentials: "include" }
+        );
 
         if (!ignore) {
-          if (userResponse.ok) {
-            setIsUserLoggedIn(true);
-          } else {
-            setIsUserLoggedIn(false);
-          }
+          setIsUserLoggedIn(userResponse.ok);
         }
       } catch (error) {
         console.error("Session check failed:", error);
+
         if (!ignore) {
           setIsUserLoggedIn(false);
           setIsAdminLoggedIn(false);
@@ -55,19 +77,42 @@ function App() {
     };
 
     checkSessions();
+
     return () => {
       ignore = true;
     };
   }, []);
 
-  // Session checking screen
+  // Return from navigation to the previous BookNav screen.
+  const handleNavigationBack = () => {
+    const url = new URL(window.location.href);
+    url.searchParams.delete("navigate");
+
+    window.history.replaceState(
+      {},
+      "",
+      `${url.pathname}${url.search}${url.hash}`
+    );
+
+    setNavigationBookId(null);
+  };
+
+  // QR navigation is public so a phone can open a book directly.
+  if (navigationBookId) {
+    return (
+      <BookNavigation
+        bookId={navigationBookId}
+        onBack={handleNavigationBack}
+      />
+    );
+  }
+
+  // Wait until the existing session check finishes.
   if (checkingSession) {
     return <div>Checking session...</div>;
   }
 
-  // ================================
-  // ADMIN DASHBOARD
-  // ================================
+  // ADMIN DASHBOARD.
   if (isAdminLoggedIn) {
     return (
       <AdminBooks
@@ -79,9 +124,7 @@ function App() {
     );
   }
 
-  // ================================
-  // USER HOME
-  // ================================
+  // USER HOME.
   if (isUserLoggedIn) {
     return (
       <div className="booknav-layout">
@@ -126,7 +169,7 @@ function App() {
                 try {
                   await fetch(`${API_BASE_URL}/user/logout`, {
                     method: "POST",
-                    credentials: "include"
+                    credentials: "include",
                   });
                 } catch (error) {
                   console.error("Logout error:", error);
@@ -163,9 +206,7 @@ function App() {
     );
   }
 
-  // ================================
-  // ADMIN LOGIN
-  // ================================
+  // ADMIN LOGIN.
   if (mode === "admin-login") {
     return (
       <AdminLogin
@@ -176,9 +217,7 @@ function App() {
     );
   }
 
-  // ================================
-  // USER REGISTER
-  // ================================
+  // USER REGISTRATION.
   if (mode === "register") {
     return (
       <UserRegister
@@ -189,9 +228,7 @@ function App() {
     );
   }
 
-  // ================================
-  // USER LOGIN
-  // ================================
+  // USER LOGIN.
   return (
     <UserLogin
       onLogin={() => setIsUserLoggedIn(true)}

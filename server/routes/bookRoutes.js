@@ -13,6 +13,7 @@ const {
   checkHealth: lacsCheckHealth
 } = require("../services/lacsService");
 const { buildSearchFilter } = require("../services/bookSearch");
+const { extractKeywords } = require("../services/keywordExtractor");
 const router = express.Router();
 
 // Allowed fields for Book schema to prevent mass assignment
@@ -155,6 +156,8 @@ function extractSafeString(value) {
 router.post("/", protectAdmin, async (req, res) => {
   try {
     const bookData = sanitizeBookInput(req.body);
+    // Automatically extract keywords from the book metadata.
+    bookData.keywords = extractKeywords(bookData);
 
     if (!bookData.title || !bookData.author || !bookData.category || !bookData.shelf || !bookData.rack) {
       return res.status(400).json({
@@ -654,6 +657,14 @@ router.put("/:id", protectAdmin, async (req, res) => {
     }
 
     const updateData = sanitizeBookInput(req.body);
+    // Re-extract keywords from updated metadata while retaining
+    // existing keywords when the request does not supply new ones.
+    const mergedBookData = {
+    ...oldBook.toObject(),
+    ...updateData
+};
+
+updateData.keywords = extractKeywords(mergedBookData);
 
     const book = await Book.findByIdAndUpdate(
       req.params.id,
